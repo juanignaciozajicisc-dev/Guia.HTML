@@ -1,0 +1,1285 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HTML desde cero: etiquetas, atributos y práctica</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17202a;
+      --muted: #667085;
+      --paper: #fbfcff;
+      --panel: #ffffff;
+      --line: #d8dee9;
+      --blue: #246bfe;
+      --green: #0f8b66;
+      --rose: #c8466a;
+      --amber: #b7791f;
+      --violet: #7157c8;
+      --shadow: 0 14px 34px rgba(28, 39, 61, .12);
+      --mono: "Cascadia Mono", "Consolas", monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(36, 107, 254, .06), transparent 340px),
+        radial-gradient(circle at 84% 8%, rgba(15, 139, 102, .14), transparent 260px),
+        var(--paper);
+      line-height: 1.55;
+    }
+
+    a { color: var(--blue); }
+    code, pre, textarea { font-family: var(--mono); }
+    button, input, textarea { font: inherit; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px clamp(16px, 4vw, 44px);
+      background: rgba(251, 252, 255, .88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(216, 222, 233, .85);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      color: white;
+      background: linear-gradient(135deg, var(--blue), var(--green));
+      font-family: var(--mono);
+      font-size: 14px;
+    }
+
+    nav {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #293548;
+      font-size: 14px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+
+    nav a:hover, nav a:focus-visible {
+      background: #eef3ff;
+      outline: none;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(320px, .95fr);
+      align-items: center;
+      gap: clamp(24px, 5vw, 64px);
+      min-height: calc(100vh - 72px);
+      padding: clamp(34px, 6vw, 76px) clamp(16px, 5vw, 72px) 40px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      max-width: 780px;
+      font-size: clamp(40px, 8vw, 86px);
+      line-height: .96;
+    }
+
+    .hero p {
+      max-width: 680px;
+      color: var(--muted);
+      font-size: clamp(17px, 2vw, 21px);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 10px 15px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--ink);
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(28, 39, 61, .06);
+    }
+
+    .btn.primary {
+      color: white;
+      background: var(--blue);
+      border-color: var(--blue);
+    }
+
+    .visual {
+      min-height: 460px;
+      display: grid;
+      align-items: center;
+    }
+
+    .dom-board {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #101828;
+      box-shadow: var(--shadow);
+      min-height: 420px;
+      padding: 22px;
+      color: #eef4ff;
+    }
+
+    canvas {
+      width: 100%;
+      height: 170px;
+      display: block;
+      border-radius: 8px;
+      background: #0c1324;
+      margin-bottom: 18px;
+      border: 1px solid rgba(255,255,255,.12);
+    }
+
+    .code-stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .code-line {
+      display: grid;
+      grid-template-columns: 86px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px;
+      background: rgba(255,255,255,.055);
+      font-family: var(--mono);
+      font-size: 13px;
+    }
+
+    .code-line span:first-child { color: #98a2b3; }
+    .tag-blue { color: #8cc6ff; }
+    .tag-green { color: #80e2b6; }
+    .tag-rose { color: #ff9db8; }
+    .tag-amber { color: #ffd166; }
+
+    main section {
+      padding: 52px clamp(16px, 5vw, 72px);
+      border-top: 1px solid rgba(216, 222, 233, .75);
+    }
+
+    .section-head {
+      max-width: 920px;
+      margin-bottom: 24px;
+    }
+
+    .section-head h2 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 1.05;
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 10px 24px rgba(28, 39, 61, .07);
+    }
+
+    .lesson {
+      grid-column: span 4;
+      padding: 20px;
+    }
+
+    .lesson h3, .panel h3 {
+      margin: 0 0 10px;
+      font-size: 20px;
+    }
+
+    .lesson p { color: var(--muted); }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #f7f9fc;
+      font-family: var(--mono);
+      font-size: 13px;
+    }
+
+    .lab {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .editor, .preview {
+      min-height: 520px;
+      overflow: hidden;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: #f7f9fc;
+    }
+
+    .panel-title strong { font-size: 15px; }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .editor-shell {
+      position: relative;
+      min-height: 465px;
+      background: #101828;
+    }
+
+    .snippet-bar {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+      background: #0c1324;
+    }
+
+    .snippet-btn {
+      flex: 0 0 auto;
+      min-height: 32px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 8px;
+      color: #dbe8ff;
+      background: rgba(255,255,255,.06);
+      font-family: var(--mono);
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .snippet-btn:hover, .snippet-btn:focus-visible {
+      border-color: #8cc6ff;
+      background: rgba(140,198,255,.14);
+      outline: none;
+    }
+
+    .autocomplete {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      top: 56px;
+      z-index: 8;
+      display: none;
+      max-height: 260px;
+      overflow: auto;
+      border: 1px solid rgba(140,198,255,.45);
+      border-radius: 8px;
+      background: #182235;
+      box-shadow: 0 18px 32px rgba(0,0,0,.32);
+    }
+
+    .autocomplete.open { display: block; }
+
+    .suggestion {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 10px;
+      width: 100%;
+      min-height: 44px;
+      padding: 9px 12px;
+      border: 0;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      color: #dbe8ff;
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .suggestion:last-child { border-bottom: 0; }
+    .suggestion.active, .suggestion:hover { background: rgba(36,107,254,.32); }
+    .suggestion code { color: #8cc6ff; font-weight: 700; }
+    .suggestion span { color: #b7c2d6; font-size: 13px; }
+
+    textarea {
+      display: block;
+      width: 100%;
+      height: calc(100% - 108px);
+      min-height: 410px;
+      resize: vertical;
+      padding: 16px;
+      border: 0;
+      outline: none;
+      color: #dbe8ff;
+      background: transparent;
+      font-family: var(--mono);
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    iframe {
+      display: block;
+      width: 100%;
+      height: calc(100% - 55px);
+      min-height: 465px;
+      border: 0;
+      background: white;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: white;
+      cursor: pointer;
+    }
+
+    .icon-btn:hover { background: #eef3ff; }
+
+    .filters {
+      display: grid;
+      grid-template-columns: minmax(240px, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      margin: 22px 0;
+    }
+
+    .searchbox {
+      min-height: 46px;
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 14px;
+      background: white;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: white;
+      padding: 8px 11px;
+      cursor: pointer;
+      color: #344054;
+    }
+
+    .chip.active {
+      border-color: var(--blue);
+      color: white;
+      background: var(--blue);
+    }
+
+    .tag-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .tag-card {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 18px;
+      min-height: auto;
+    }
+
+    .tag-card header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .tag-name {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      background: #eff6ff;
+      color: #0c4a6e;
+      font-family: var(--mono);
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .category {
+      color: #667085;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 4px 8px;
+      background: #f3f4f6;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .tag-card p {
+      margin: 0;
+      color: #374151;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .tag-attrs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding-top: 6px;
+    }
+
+    .attr-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background: #fef3c7;
+      color: #7c2d12;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .tag-card pre {
+      margin: 0;
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
+      border-radius: 6px;
+      padding: 12px;
+      background: #0f172a;
+      color: #e0e7ff;
+      font-size: 12px;
+      line-height: 1.4;
+      border: 1px solid #1e293b;
+    }
+
+    .rules {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .rule {
+      padding: 18px;
+    }
+
+    .rule strong {
+      display: block;
+      margin-bottom: 6px;
+      color: #1d2939;
+    }
+
+    .rule p { margin: 0; color: var(--muted); }
+
+    .callout {
+      padding: 20px;
+      border-left: 5px solid var(--green);
+      background: #f0faf6;
+      border-radius: 8px;
+      margin-top: 18px;
+    }
+
+    footer {
+      padding: 28px clamp(16px, 5vw, 72px) 44px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+    }
+
+    @media (max-width: 920px) {
+      .hero, .lab { grid-template-columns: 1fr; }
+      .hero { min-height: auto; }
+      .visual { min-height: auto; }
+      .lesson { grid-column: span 6; }
+      .filters { grid-template-columns: 1fr; }
+      .rules { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .lesson { grid-column: span 12; }
+      .code-line { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 42px; }
+      main section { padding-top: 38px; padding-bottom: 38px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="mark">&lt;&gt;</span> Guia Principal </div>
+    <nav aria-label="Navegacion principal">
+      <a href="#fundamentos">Fundamentos</a>
+      <a href="#laboratorio">Laboratorio</a>
+      <a href="#etiquetas">Etiquetas</a>
+      <a href="#edicion">Como editar</a>
+      <a href="#buenas-practicas">Buenas practicas</a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <div>
+      <h1>HTML desde cero hasta una referencia completa.</h1>
+      <p>Aprende que hace cada etiqueta, como combinarla con atributos, como estilizarla con CSS y como probar cambios sin salir de esta pagina.</p>
+      <div class="actions">
+        <a class="btn primary" href="#laboratorio">Abrir laboratorio</a>
+        <a class="btn" href="#etiquetas">Ver biblioteca de etiquetas</a>
+      </div>
+    </div>
+    <div class="visual" aria-label="Representacion visual del arbol HTML">
+      <div class="dom-board">
+        <canvas id="domCanvas" width="720" height="260" aria-hidden="true"></canvas>
+        <div class="code-stack" aria-label="Ejemplo de documento HTML">
+          <div class="code-line"><span>raiz</span><b><span class="tag-blue">&lt;html&gt;</span> envuelve todo el documento</b></div>
+          <div class="code-line"><span>cabeza</span><b><span class="tag-green">&lt;head&gt;</span> metadata, titulo, estilos</b></div>
+          <div class="code-line"><span>cuerpo</span><b><span class="tag-rose">&lt;body&gt;</span> contenido visible</b></div>
+          <div class="code-line"><span>semantica</span><b><span class="tag-amber">&lt;main&gt;</span>, &lt;nav&gt;, &lt;footer&gt; explican significado</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <section id="fundamentos">
+      <div class="section-head">
+        <h2>Fundamentos</h2>
+        <p>HTML no es lenguaje de programación: es un <strong>lenguaje de marcado</strong>. Su tarea es comunicar al navegador qué significa cada contenido. <code>&lt;p&gt;</code> dice "esto es un párrafo", <code>&lt;h1&gt;</code> dice "esto es lo más importante", <code>&lt;button&gt;</code> dice "esto es accionable".</p>
+      </div>
+      <div class="grid">
+        <article class="lesson panel">
+          <h3>🏗️ Anatomía de una etiqueta</h3>
+          <p>Casi todas las etiquetas abren, contienen algo, y cierran. Ejemplos: <code>&lt;p&gt;Texto&lt;/p&gt;</code>, <code>&lt;div&gt;Contenido&lt;/div&gt;</code>. Algunas, como <code>&lt;img&gt;</code> o <code>&lt;input&gt;</code>, nunca cierran porque no envuelven contenido.</p>
+          <pre><code>&lt;p class="intro"&gt;Tu contenido aqui&lt;/p&gt;</code></pre>
+          <div class="pill-row"><span class="pill">apertura</span><span class="pill">atributo</span><span class="pill">contenido</span><span class="pill">cierre</span></div>
+        </article>
+        <article class="lesson panel">
+          <h3>⚙️ Atributos</h3>
+          <p>Los atributos dan información o modifican comportamiento. <code>href</code> dice a dónde va el enlace. <code>alt</code> describe una imagen. <code>class</code> aplica estilos. <code>aria-label</code> dice qué es para lectores de pantalla.</p>
+          <pre><code>&lt;a href="inicio" class="boton"&gt;Link&lt;/a&gt;</code></pre>
+          <div class="pill-row"><span class="pill">globales</span><span class="pill">especificos</span><span class="pill">accesibilidad</span></div>
+        </article>
+        <article class="lesson panel">
+          <h3>🎯 Semántica</h3>
+          <p>Una etiqueta semántica comunica <strong>significado</strong>. <code>&lt;button&gt;</code> no es solo visual: el navegador sabe que se activa con teclado y Enter. <code>&lt;nav&gt;</code> explica que eso es navegación. <code>&lt;footer&gt;</code> señala el pie de página.</p>
+          <pre><code>&lt;button type="submit"&gt;Guardar&lt;/button&gt;</code></pre>
+          <div class="pill-row"><span class="pill">SEO</span><span class="pill">accesibilidad</span><span class="pill">mantenimiento</span></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="laboratorio">
+      <div class="section-head">
+        <h2>Laboratorio editable</h2>
+        <p>Escribe y modifica HTML en tiempo real. Cambia etiquetas, atributos, estilos o contenido y observa los cambios al instante en la vista previa. Usa los botones de etiquetas rapidas o escribe <code>&lt;</code> para abrir sugerencias inteligentes.</p>
+      </div>
+      <div class="lab">
+        <div class="editor panel">
+          <div class="panel-title">
+            <strong>📝 Codigo HTML</strong>
+            <div class="toolbar">
+              <button class="icon-btn" id="resetBtn" title="Restaurar ejemplo inicial" aria-label="Restaurar ejemplo inicial">↺</button>
+              <button class="icon-btn" id="formatBtn" title="Insertar comentario" aria-label="Insertar comentario">&lt;!&gt;</button>
+            </div>
+          </div>
+          <div class="editor-shell">
+            <div class="snippet-bar" id="snippetBar" aria-label="Etiquetas predefinidas"></div>
+            <div class="autocomplete" id="autocompleteBox" role="listbox" aria-label="Sugerencias de etiquetas"></div>
+            <p class="sr-only" id="editorHelp">Escribe el signo menor que para abrir sugerencias de etiquetas. Usa flechas, Enter o Tab para insertar. Presiona Ctrl+Espacio para abrir sugerencias en cualquier momento.</p>
+            <textarea id="htmlInput" spellcheck="false" aria-describedby="editorHelp"></textarea>
+          </div>
+        </div>
+        <div class="preview panel">
+          <div class="panel-title">
+            <strong>👁️ Vista previa</strong>
+            <span class="pill" id="statusPill">listo</span>
+          </div>
+          <iframe id="previewFrame" title="Vista previa en vivo del codigo HTML"></iframe>
+        </div>
+      </div>
+    </section>
+
+    <section id="etiquetas">
+      <div class="section-head">
+        <h2>Biblioteca de etiquetas HTML</h2>
+        <p>Referencia de elementos actuales y algunos obsoletos importantes para reconocer codigo viejo. Usa el buscador o filtra por categoria.</p>
+      </div>
+      <div class="filters">
+        <input id="tagSearch" class="searchbox" type="search" placeholder="Buscar por etiqueta, funcion o ejemplo..." aria-label="Buscar etiquetas">
+        <div class="chips" id="categoryChips" aria-label="Filtros por categoria"></div>
+      </div>
+      <div class="tag-grid" id="tagGrid"></div>
+    </section>
+
+    <section id="edicion">
+      <div class="section-head">
+        <h2>Cómo editar HTML</h2>
+        <p>Editar una página significa trabajar en tres capas independientes: la <strong>estructura</strong> con HTML, la <strong>apariencia</strong> con CSS y el <strong>comportamiento</strong> con JavaScript. Puedes cambiar una capa sin afectar las otras.</p>
+      </div>
+      <div class="rules">
+        <article class="rule panel"><strong>1️⃣ Cambia contenido</strong><p>Edita el texto dentro de las etiquetas: títulos, párrafos, listas, botones y enlaces. El navegador los muestra tal cual lo dejas.</p></article>
+        <article class="rule panel"><strong>2️⃣ Cambia atributos</strong><p>Modifica <code>href</code> para cambiar destinos, <code>src</code> para otras imágenes, <code>alt</code> para descripciones, <code>class</code> para aplicar estilos CSS diferentes.</p></article>
+        <article class="rule panel"><strong>3️⃣ Cambia estilos</strong><p>Usa CSS en <code>&lt;style&gt;</code> para colores, tamaños, espacios, grillas, bordes, efectos hover y responsividad sin tocar el HTML.</p></article>
+        <article class="rule panel"><strong>4️⃣ Valida la estructura</strong><p>Revisa cierres correctos, jerarquía de encabezados (h1 antes de h2), formularios con labels vinculados, y que cada página tenga un único <code>&lt;main&gt;</code>.</p></article>
+      </div>
+      <div class="callout">
+        <strong>💡 Consejo clave:</strong> Si dudas entre <code>&lt;div&gt;</code> y una etiqueta semántica, pregunta <em>qué significa</em> ese bloque. ¿Es navegación? Usa <code>&lt;nav&gt;</code>. ¿Es independiente? Usa <code>&lt;article&gt;</code>. ¿Es un botón de verdad? Usa <code>&lt;button&gt;</code>, no un div estilizado.
+      </div>
+    </section>
+
+    <section id="buenas-practicas">
+      <div class="section-head">
+        <h2>Buenas prácticas</h2>
+        <p>HTML fuerte es <strong>claro, accesible y fácil de mantener</strong>. El navegador perdona muchos errores, pero las personas, los buscadores y el código futuro agradecen precisión y significado.</p>
+      </div>
+      <div class="rules">
+        <article class="rule panel"><strong>✍️ Etiquetas por significado</strong><p>No elijas una etiqueta solo por cómo se ve visualmente. Para apariencia usa CSS. Si una etiqueta tiene nombre específico (<code>&lt;nav&gt;</code>, <code>&lt;button&gt;</code>, <code>&lt;time&gt;</code>), úsala correctamente.</p></article>
+        <article class="rule panel"><strong>🖼️ Describe siempre los medios</strong><p>Toda imagen informativa necesita <code>alt</code> descriptivo. Videos y audios importantes necesitan controles y subtítulos en idioma natural para que todos accedan.</p></article>
+        <article class="rule panel"><strong>📋 Formularios accesibles</strong><p>Relaciona cada <code>&lt;label&gt;</code> con su campo usando <code>for</code> e <code>id</code>. Usa tipos HTML5 correctos como <code>email</code>, <code>number</code>, <code>date</code> para mejor experiencia.</p></article>
+        <article class="rule panel"><strong>⚠️ Evita etiquetas obsoletas</strong><p><code>&lt;font&gt;</code>, <code>&lt;center&gt;</code> y <code>&lt;marquee&gt;</code> pertenecen a otra época. CSS hace ese trabajo mejor y sin perder mantenibilidad.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Referencia basada en la especificacion viva de HTML y la documentacion de MDN. Fuentes: <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements">MDN HTML elements reference</a> y <a href="https://html.spec.whatwg.org/multipage/indices.html#elements-3">WHATWG HTML Standard. </a> Experimento Educativo para ver las facultades la IA Codex de OpenAI. 
+  </footer>
+  <script>
+    const starterHTML = `<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mi primera pagina</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      color: #17202a;
+      background: #f5f7fb;
+    }
+    header, main, footer {
+      max-width: 760px;
+      margin: auto;
+      padding: 24px;
+    }
+    .tarjeta {
+      background: white;
+      border: 1px solid #d8dee9;
+      border-radius: 8px;
+      padding: 18px;
+    }
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: white;
+      background: #246bfe;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Explorando HTML</h1>
+    <nav aria-label="Secciones">
+      <a href="#articulo">Articulo</a>
+      <a href="#formulario">Formulario</a>
+    </nav>
+  </header>
+
+  <main>
+    <article id="articulo" class="tarjeta">
+      <h2>Una etiqueta cuenta una intencion</h2>
+      <p>Este parrafo vive dentro de un articulo. El enlace va a <a href="https://developer.mozilla.org">MDN</a>.</p>
+      <figure>
+        <img alt="Bloques de codigo HTML" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='620' height='180'%3E%3Crect width='620' height='180' fill='%23101828'/%3E%3Ctext x='28' y='58' fill='%238cc6ff' font-size='26' font-family='monospace'%3E%26lt;section%26gt;%3C/text%3E%3Ctext x='68' y='105' fill='%2380e2b6' font-size='22' font-family='monospace'%3E%26lt;h2%26gt;Titulo%26lt;/h2%26gt;%3C/text%3E%3Ctext x='28' y='150' fill='%23ffd166' font-size='26' font-family='monospace'%3E%26lt;/section%26gt;%3C/text%3E%3C/svg%3E">
+        <figcaption>Las etiquetas se anidan como cajas con significado.</figcaption>
+      </figure>
+    </article>
+
+    <section id="formulario" class="tarjeta">
+      <h2>Formulario accesible</h2>
+      <form>
+        <label for="nombre">Nombre</label>
+        <input id="nombre" name="nombre" placeholder="Ada Lovelace">
+        <button type="button">Enviar practica</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <small>Hecho con HTML semantico.</small>
+  </footer>
+</body>
+</html>`;
+
+    const tags = [
+      ["html","Raiz","Elemento raiz del documento; contiene head y body.","<html lang=\"es\">...</html>"],
+      ["head","Metadatos","Contiene datos para el navegador: titulo, estilos, scripts y enlaces.","<head><title>Pagina</title></head>"],
+      ["title","Metadatos","Define el titulo que aparece en la pestana del navegador.","<title>Mi sitio</title>"],
+      ["base","Metadatos","Define una URL base para enlaces relativos del documento.","<base href=\"https://ejemplo.com/\">"],
+      ["link","Metadatos","Conecta recursos externos, como hojas CSS o iconos.","<link rel=\"stylesheet\" href=\"estilos.css\">"],
+      ["meta","Metadatos","Declara metadatos como charset, viewport, descripcion o autor.","<meta name=\"viewport\" content=\"width=device-width\">"],
+      ["style","Metadatos","Incluye CSS dentro del documento HTML.","<style>body { color: #17202a; }</style>"],
+      ["body","Estructura","Contiene todo el contenido visible de la pagina.","<body>Contenido visible</body>"],
+      ["header","Secciones","Introduce una pagina o seccion; suele incluir logo, titulo o navegacion.","<header><h1>Revista</h1></header>"],
+      ["main","Secciones","Marca el contenido principal unico de la pagina.","<main>Contenido central</main>"],
+      ["footer","Secciones","Pie de pagina o de seccion con creditos, enlaces o datos legales.","<footer><small>2026</small></footer>"],
+      ["nav","Secciones","Agrupa enlaces de navegacion importantes.","<nav><a href=\"#inicio\">Inicio</a></nav>"],
+      ["section","Secciones","Agrupa contenido tematico que normalmente lleva encabezado.","<section><h2>Servicios</h2></section>"],
+      ["article","Secciones","Contenido independiente y reutilizable, como una nota o publicacion.","<article><h2>Noticia</h2></article>"],
+      ["aside","Secciones","Contenido relacionado pero secundario, como una barra lateral.","<aside>Lecturas sugeridas</aside>"],
+      ["address","Secciones","Informacion de contacto de una persona u organizacion.","<address>hola@ejemplo.com</address>"],
+      ["h1","Texto","Encabezado de mayor nivel; normalmente uno por pagina para el tema principal.","<h1>Guia HTML</h1>"],
+      ["h2","Texto","Encabezado de segundo nivel para secciones principales.","<h2>Etiquetas</h2>"],
+      ["h3","Texto","Encabezado de tercer nivel para subsecciones.","<h3>Formularios</h3>"],
+      ["h4","Texto","Encabezado de cuarto nivel.","<h4>Detalles</h4>"],
+      ["h5","Texto","Encabezado de quinto nivel.","<h5>Nota tecnica</h5>"],
+      ["h6","Texto","Encabezado de sexto nivel.","<h6>Referencia</h6>"],
+      ["hgroup","Secciones","Agrupa un encabezado con subtitulo o texto secundario relacionado.","<hgroup><h1>Libro</h1><p>Edicion practica</p></hgroup>"],
+      ["search","Secciones","Contenedor semantico para controles de busqueda o filtrado.","<search><form><input type=\"search\"></form></search>"],
+      ["p","Texto","Parrafo de texto o contenido relacionado.","<p>Un parrafo claro.</p>"],
+      ["br","Texto","Salto de linea dentro de texto cuando la division es significativa.","Linea 1<br>Linea 2"],
+      ["hr","Texto","Separacion tematica entre bloques de contenido.","<hr>"],
+      ["pre","Texto","Texto preformateado; conserva espacios y saltos.","<pre>  texto alineado</pre>"],
+      ["blockquote","Texto","Cita extensa en bloque; puede usar cite para la fuente.","<blockquote cite=\"url\">Cita larga</blockquote>"],
+      ["ol","Listas","Lista ordenada con numeracion.","<ol><li>Primero</li></ol>"],
+      ["ul","Listas","Lista no ordenada con vinietas.","<ul><li>Item</li></ul>"],
+      ["menu","Listas","Lista semantica de comandos o acciones; se comporta como ul.","<menu><li>Copiar</li></menu>"],
+      ["li","Listas","Item dentro de ol, ul o menu.","<li>Elemento</li>"],
+      ["dl","Listas","Lista de descripcion con terminos y definiciones.","<dl><dt>HTML</dt><dd>Marcado</dd></dl>"],
+      ["dt","Listas","Termino dentro de una lista de descripcion.","<dt>CSS</dt>"],
+      ["dd","Listas","Descripcion o valor de un termino en dl.","<dd>Estilos en cascada</dd>"],
+      ["figure","Texto","Contenido autonomo como imagen, grafico, codigo o tabla.","<figure><img alt=\"\" src=\"foto.jpg\"></figure>"],
+      ["figcaption","Texto","Leyenda de un figure.","<figcaption>Vista del componente.</figcaption>"],
+      ["div","Agrupacion","Contenedor generico de bloque sin significado semantico propio.","<div class=\"panel\">...</div>"],
+      ["span","Texto en linea","Contenedor generico en linea para aplicar estilo o atributos.","<span class=\"resaltado\">texto</span>"],
+      ["a","Texto en linea","Crea enlaces con href hacia paginas, archivos, correos o secciones.","<a href=\"https://ejemplo.com\">Visitar</a>"],
+      ["em","Texto en linea","Enfasis de lectura; suele renderizarse en cursiva.","<em>muy importante al decirlo</em>"],
+      ["strong","Texto en linea","Importancia fuerte, urgencia o seriedad; suele verse en negrita.","<strong>Atencion</strong>"],
+      ["b","Texto en linea","Llama la atencion visual sin agregar importancia semantica.","<b>Palabra clave</b>"],
+      ["i","Texto en linea","Texto diferenciado, como termino tecnico o voz alternativa.","<i>status quo</i>"],
+      ["u","Texto en linea","Anotacion no textual; no usar solo para decorar enlaces.","<u>termino marcado</u>"],
+      ["s","Texto en linea","Contenido que ya no es exacto o relevante.","<s>Precio anterior</s>"],
+      ["small","Texto en linea","Comentario lateral, legal o letra chica.","<small>Impuestos incluidos</small>"],
+      ["abbr","Texto en linea","Abreviatura con expansion opcional en title.","<abbr title=\"HyperText Markup Language\">HTML</abbr>"],
+      ["cite","Texto en linea","Titulo de una obra citada.","<cite>Don Quijote</cite>"],
+      ["q","Texto en linea","Cita corta en linea.","<q>Aprender haciendo</q>"],
+      ["dfn","Texto en linea","Termino que se esta definiendo.","<dfn>Etiqueta</dfn>"],
+      ["mark","Texto en linea","Resalta texto relevante para el contexto.","<mark>resultado encontrado</mark>"],
+      ["time","Texto en linea","Fecha u hora legible por humanos y maquinas.","<time datetime=\"2026-06-23\">23 de junio</time>"],
+      ["data","Texto en linea","Asocia texto con un valor legible por maquinas.","<data value=\"sku-42\">Remera azul</data>"],
+      ["code","Texto en linea","Fragmento corto de codigo.","<code>display: grid</code>"],
+      ["var","Texto en linea","Variable en matematica o programacion.","<var>x</var>"],
+      ["samp","Texto en linea","Salida de un programa o sistema.","<samp>Error 404</samp>"],
+      ["kbd","Texto en linea","Entrada de teclado o comando del usuario.","<kbd>Ctrl</kbd> + <kbd>S</kbd>"],
+      ["sub","Texto en linea","Subindice tipografico.","H<sub>2</sub>O"],
+      ["sup","Texto en linea","Superindice tipografico.","x<sup>2</sup>"],
+      ["bdi","Texto en linea","Aisla texto con direccion desconocida.","<bdi>اسم</bdi>"],
+      ["bdo","Texto en linea","Fuerza direccion del texto con dir.","<bdo dir=\"rtl\">texto</bdo>"],
+      ["ruby","Texto en linea","Anotacion de pronunciacion, comun en idiomas asiaticos.","<ruby>漢<rt>kan</rt></ruby>"],
+      ["rt","Texto en linea","Texto de pronunciacion dentro de ruby.","<rt>kan</rt>"],
+      ["rp","Texto en linea","Parentesis alternativos para navegadores sin ruby.","<rp>(</rp><rt>kan</rt><rp>)</rp>"],
+      ["wbr","Texto en linea","Punto opcional de corte de palabra.","super<wbr>larga"],
+      ["ins","Ediciones","Texto agregado al documento.","<ins>Nuevo texto</ins>"],
+      ["del","Ediciones","Texto eliminado o reemplazado.","<del>Texto anterior</del>"],
+      ["img","Multimedia","Inserta una imagen; alt describe su contenido o funcion.","<img src=\"foto.jpg\" alt=\"Persona programando\">"],
+      ["picture","Multimedia","Ofrece imagenes alternativas segun pantalla o formato.","<picture><source srcset=\"foto.webp\"><img src=\"foto.jpg\" alt=\"\"></picture>"],
+      ["source","Multimedia","Fuente alternativa para picture, audio o video.","<source srcset=\"foto.avif\" type=\"image/avif\">"],
+      ["audio","Multimedia","Reproductor de audio con controles opcionales.","<audio controls src=\"audio.mp3\"></audio>"],
+      ["video","Multimedia","Reproductor de video.","<video controls src=\"clip.mp4\"></video>"],
+      ["track","Multimedia","Subtitulos o pistas de texto para audio/video.","<track kind=\"subtitles\" src=\"sub.vtt\" srclang=\"es\">"],
+      ["map","Multimedia","Mapa de zonas clicables sobre una imagen.","<map name=\"plano\">...</map>"],
+      ["area","Multimedia","Region clicable dentro de un map.","<area shape=\"rect\" coords=\"0,0,40,40\" href=\"...\">"],
+      ["iframe","Embebidos","Inserta otra pagina dentro de la actual.","<iframe src=\"pagina.html\" title=\"Demo\"></iframe>"],
+      ["embed","Embebidos","Inserta contenido externo manejado por el navegador.","<embed src=\"archivo.pdf\" type=\"application/pdf\">"],
+      ["object","Embebidos","Recurso externo con contenido alternativo.","<object data=\"grafico.svg\" type=\"image/svg+xml\"></object>"],
+      ["param","Embebidos","Parametro para object.","<param name=\"autoplay\" value=\"false\">"],
+      ["portal","Embebidos","Elemento experimental/obsoleto en muchos contextos; evita depender de el.","<portal src=\"pagina.html\"></portal>"],
+      ["fencedframe","Embebidos","Marco con aislamiento de privacidad en contextos compatibles.","<fencedframe src=\"https://ejemplo.com\"></fencedframe>"],
+      ["canvas","Graficos","Lienzo para dibujar con JavaScript.","<canvas width=\"300\" height=\"150\"></canvas>"],
+      ["svg","Graficos","Contenedor de graficos vectoriales SVG dentro de HTML.","<svg viewBox=\"0 0 10 10\"><circle cx=\"5\" cy=\"5\" r=\"4\"/></svg>"],
+      ["math","Graficos","Inserta MathML para notacion matematica.","<math><mi>x</mi><mo>=</mo><mn>2</mn></math>"],
+      ["script","Scripting","Incluye o enlaza JavaScript.","<script src=\"app.js\"><\/script>"],
+      ["noscript","Scripting","Contenido alternativo cuando JavaScript no esta disponible.","<noscript>Activa JavaScript para continuar.</noscript>"],
+      ["template","Scripting","Fragmento HTML inerte para clonar con JavaScript.","<template id=\"card\"><article></article></template>"],
+      ["slot","Web Components","Punto de insercion de contenido en un Web Component.","<slot name=\"titulo\"></slot>"],
+      ["table","Tablas","Tabla de datos, no para maquetar paginas.","<table>...</table>"],
+      ["caption","Tablas","Titulo o descripcion de una tabla.","<caption>Ventas por mes</caption>"],
+      ["thead","Tablas","Grupo de filas de encabezado.","<thead><tr><th>Mes</th></tr></thead>"],
+      ["tbody","Tablas","Grupo principal de filas de datos.","<tbody><tr><td>Enero</td></tr></tbody>"],
+      ["tfoot","Tablas","Grupo de resumen o pie de tabla.","<tfoot><tr><td>Total</td></tr></tfoot>"],
+      ["tr","Tablas","Fila de tabla.","<tr><td>Dato</td></tr>"],
+      ["th","Tablas","Celda de encabezado; usar scope mejora accesibilidad.","<th scope=\"col\">Nombre</th>"],
+      ["td","Tablas","Celda de datos.","<td>Ada</td>"],
+      ["colgroup","Tablas","Agrupa columnas para aplicar propiedades.","<colgroup><col span=\"2\"></colgroup>"],
+      ["col","Tablas","Define una columna dentro de colgroup.","<col class=\"precio\">"],
+      ["form","Formularios","Agrupa controles para enviar o procesar datos.","<form action=\"/enviar\" method=\"post\">...</form>"],
+      ["label","Formularios","Etiqueta visible asociada a un control.","<label for=\"email\">Email</label>"],
+      ["input","Formularios","Campo versatil: texto, email, fecha, checkbox, radio, archivo y mas.","<input id=\"email\" type=\"email\" required>"],
+      ["button","Formularios","Boton accesible para acciones o envio.","<button type=\"submit\">Enviar</button>"],
+      ["select","Formularios","Lista desplegable de opciones.","<select><option>HTML</option></select>"],
+      ["option","Formularios","Opcion dentro de select, optgroup o datalist.","<option value=\"html\">HTML</option>"],
+      ["optgroup","Formularios","Agrupa opciones dentro de select.","<optgroup label=\"Frontend\"><option>HTML</option></optgroup>"],
+      ["textarea","Formularios","Campo de texto multilinea.","<textarea rows=\"4\"></textarea>"],
+      ["fieldset","Formularios","Agrupa controles relacionados.","<fieldset><legend>Contacto</legend></fieldset>"],
+      ["legend","Formularios","Titulo de un fieldset.","<legend>Preferencias</legend>"],
+      ["datalist","Formularios","Sugerencias para un input.","<datalist id=\"lenguajes\"><option value=\"HTML\"></datalist>"],
+      ["output","Formularios","Resultado de un calculo o accion.","<output for=\"a b\">42</output>"],
+      ["progress","Formularios","Progreso de una tarea.","<progress value=\"70\" max=\"100\">70%</progress>"],
+      ["meter","Formularios","Medicion dentro de un rango conocido.","<meter value=\"0.8\">80%</meter>"],
+      ["details","Interactivos","Panel desplegable nativo.","<details><summary>Mas</summary><p>Contenido</p></details>"],
+      ["summary","Interactivos","Titulo clicable de details.","<summary>Ver detalle</summary>"],
+      ["dialog","Interactivos","Cuadro modal o no modal controlable con JavaScript.","<dialog open>Hola</dialog>"],
+      ["selectedcontent","Interactivos","Elemento nuevo usado en personalizacion de select en navegadores compatibles.","<selectedcontent></selectedcontent>"],
+      ["acronym","Obsoletas","Obsoleta; usa abbr.","<abbr title=\"HTML\">HTML</abbr>"],
+      ["applet","Obsoletas","Obsoleta; los applets Java no deben usarse.","<!-- evitar applet -->"],
+      ["basefont","Obsoletas","Obsoleta; usa CSS para tipografia.","body { font-family: sans-serif; }"],
+      ["bgsound","Obsoletas","Obsoleta; usa audio si necesitas sonido.","<audio controls src=\"sonido.mp3\"></audio>"],
+      ["big","Obsoletas","Obsoleta; usa CSS font-size.","<span class=\"grande\">Texto</span>"],
+      ["blink","Obsoletas","Obsoleta y no estandar; evita animaciones molestas.","<!-- no usar blink -->"],
+      ["center","Obsoletas","Obsoleta; centra con CSS.",".caja { text-align: center; }"],
+      ["font","Obsoletas","Obsoleta; color, fuente y tamano van en CSS.",".texto { color: red; }"],
+      ["frame","Obsoletas","Obsoleta; fue reemplazada por alternativas modernas.","<!-- no usar frame -->"],
+      ["frameset","Obsoletas","Obsoleta; no se usa en HTML moderno.","<!-- no usar frameset -->"],
+      ["marquee","Obsoletas","Obsoleta; usa animaciones CSS con criterio.","<!-- no usar marquee -->"],
+      ["nobr","Obsoletas","Obsoleta; usa CSS white-space.",".sin-corte { white-space: nowrap; }"],
+      ["noembed","Obsoletas","Obsoleta; usa contenido alternativo moderno.","<!-- no usar noembed -->"],
+      ["noframes","Obsoletas","Obsoleta; dependia de frameset.","<!-- no usar noframes -->"],
+      ["plaintext","Obsoletas","Obsoleta; usa pre o text/plain desde servidor.","<pre>texto plano</pre>"],
+      ["rb","Obsoletas","Obsoleta en la practica; ruby moderno usa rt/rp.","<ruby>漢<rt>kan</rt></ruby>"],
+      ["rtc","Obsoletas","Obsoleta en navegadores modernos; evita depender de ella.","<ruby>漢<rt>kan</rt></ruby>"],
+      ["strike","Obsoletas","Obsoleta; usa del o s segun significado.","<del>eliminado</del>"],
+      ["tt","Obsoletas","Obsoleta; usa code, kbd, samp o CSS monospace.","<code>texto</code>"],
+      ["xmp","Obsoletas","Obsoleta; usa pre y escapa signos HTML.","<pre>&amp;lt;p&amp;gt;texto&amp;lt;/p&amp;gt;</pre>"]
+    ];
+
+    const input = document.querySelector("#htmlInput");
+    const frame = document.querySelector("#previewFrame");
+    const statusPill = document.querySelector("#statusPill");
+    const tagGrid = document.querySelector("#tagGrid");
+    const search = document.querySelector("#tagSearch");
+    const chips = document.querySelector("#categoryChips");
+    const snippetBar = document.querySelector("#snippetBar");
+    const autocompleteBox = document.querySelector("#autocompleteBox");
+    let activeCategory = "Todas";
+    let activeSuggestionIndex = 0;
+    let currentCompletion = null;
+
+    const voidTags = new Set(["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"]);
+    const quickSnippetNames = ["html", "header", "main", "section", "article", "nav", "h1", "p", "a", "img", "button", "ul", "form", "table", "details", "video", "figure"];
+    const snippetTemplates = {
+      html: "<!doctype html>\n<html lang=\"es\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>__CURSOR__</title>\n  <style>\n    body {\n      font-family: system-ui, sans-serif;\n      max-width: 800px;\n      margin: auto;\n      padding: 24px;\n    }\n  </style>\n</head>\n<body>\n  <main>\n    <h1>Mi pagina</h1>\n  </main>\n</body>\n</html>",
+      header: "<header>\n  <h1>__CURSOR__</h1>\n  <nav aria-label=\"Navegacion principal\">\n    <a href=\"#inicio\">Inicio</a>\n    <a href=\"#servicios\">Servicios</a>\n  </nav>\n</header>",
+      main: "<main>\n  <section>\n    <h2>__CURSOR__</h2>\n    <p>Contenido principal aqui.</p>\n  </section>\n</main>",
+      section: "<section id=\"__CURSOR__\">\n  <h2>Titulo de la seccion</h2>\n  <p>Contenido de la seccion.</p>\n</section>",
+      article: "<article>\n  <h2>__CURSOR__</h2>\n  <p>Contenido del articulo.</p>\n  <footer>Escrito por Autor</footer>\n</article>",
+      nav: "<nav aria-label=\"Navegacion\">\n  <ul>\n    <li><a href=\"#inicio\">__CURSOR__</a></li>\n    <li><a href=\"#servicios\">Servicios</a></li>\n  </ul>\n</nav>",
+      h1: "<h1>__CURSOR__</h1>",
+      h2: "<h2>__CURSOR__</h2>",
+      p: "<p>__CURSOR__</p>",
+      a: "<a href=\"__CURSOR__\">Enlace</a>",
+      img: "<figure>\n  <img src=\"imagen.jpg\" alt=\"__CURSOR__\" width=\"600\" height=\"400\">\n  <figcaption>Descripcion de la imagen</figcaption>\n</figure>",
+      ul: "<ul>\n  <li>__CURSOR__</li>\n  <li>Segundo elemento</li>\n  <li>Tercer elemento</li>\n</ul>",
+      ol: "<ol>\n  <li>__CURSOR__</li>\n  <li>Segundo paso</li>\n  <li>Tercer paso</li>\n</ol>",
+      table: "<table>\n  <caption>__CURSOR__</caption>\n  <thead>\n    <tr>\n      <th scope=\"col\">Encabezado 1</th>\n      <th scope=\"col\">Encabezado 2</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Dato 1</td>\n      <td>Dato 2</td>\n    </tr>\n  </tbody>\n</table>",
+      form: "<form>\n  <label for=\"nombre\">Nombre</label>\n  <input id=\"nombre\" name=\"nombre\" type=\"text\" placeholder=\"__CURSOR__\" required>\n  \n  <label for=\"email\">Email</label>\n  <input id=\"email\" name=\"email\" type=\"email\" required>\n  \n  <button type=\"submit\">Enviar</button>\n</form>",
+      input: "<label for=\"campo\">Etiqueta</label>\n<input id=\"campo\" name=\"campo\" type=\"text\" placeholder=\"__CURSOR__\">",
+      button: "<button type=\"button\">__CURSOR__</button>",
+      details: "<details>\n  <summary>Hacer clic para ver mas</summary>\n  <p>__CURSOR__</p>\n</details>",
+      dialog: "<dialog open>\n  <h2>__CURSOR__</h2>\n  <p>Contenido del modal.</p>\n  <button type=\"button\">Cerrar</button>\n</dialog>",
+      video: "<video controls width=\"640\" height=\"360\">\n  <source src=\"video.mp4\" type=\"video/mp4\">\n  <track kind=\"subtitles\" src=\"subtitulos.vtt\" srclang=\"es\" label=\"Espanol\">\n  Tu navegador no soporta video HTML5\n</video>",
+      audio: "<audio controls>\n  <source src=\"__CURSOR__\" type=\"audio/mpeg\">\n  Tu navegador no soporta audio HTML5.\n</audio>",
+      figure: "<figure>\n  <img src=\"__CURSOR__\" alt=\"Descripcion\">\n  <figcaption>Titulo de la imagen</figcaption>\n</figure>"
+    };
+
+    input.value = starterHTML;
+
+    function updatePreview() {
+      frame.srcdoc = input.value;
+      statusPill.textContent = "actualizado";
+      window.clearTimeout(updatePreview.timer);
+      updatePreview.timer = window.setTimeout(() => statusPill.textContent = "listo", 900);
+    }
+
+    function escapeHTML(value) {
+      return value.replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#039;"
+      })[char]);
+    }
+
+    function renderTags() {
+      const term = search.value.trim().toLowerCase();
+      const filtered = tags.filter(([name, category, description, example]) => {
+        const haystack = `${name} ${category} ${description} ${example}`.toLowerCase();
+        const categoryOk = activeCategory === "Todas" || category === activeCategory;
+        return categoryOk && haystack.includes(term);
+      });
+      
+      const commonAttrs = {
+        "html": ["lang"],
+        "head": [],
+        "title": [],
+        "base": ["href", "target"],
+        "link": ["rel", "href", "type"],
+        "meta": ["name", "content", "charset"],
+        "style": ["media", "type"],
+        "body": [],
+        "header": [],
+        "main": [],
+        "footer": [],
+        "nav": ["aria-label"],
+        "section": ["aria-label"],
+        "article": [],
+        "aside": [],
+        "h1": ["id"], "h2": ["id"], "h3": ["id"], "h4": ["id"], "h5": ["id"], "h6": ["id"],
+        "p": [],
+        "a": ["href", "target", "title"],
+        "img": ["src", "alt", "width", "height"],
+        "video": ["src", "controls", "width", "height"],
+        "audio": ["src", "controls"],
+        "form": ["action", "method"],
+        "input": ["type", "name", "value", "required"],
+        "button": ["type"],
+        "label": ["for"],
+        "select": ["name", "required"],
+        "textarea": ["name", "rows", "cols"],
+        "table": [],
+        "tr": [],
+        "td": ["colspan", "rowspan"],
+        "th": ["scope"],
+        "div": ["class", "id"],
+        "span": ["class"],
+        "details": ["open"],
+        "summary": [],
+        "dialog": ["open"],
+        "iframe": ["src", "title"],
+        "canvas": ["width", "height"],
+        "script": ["src", "type", "defer"],
+        "template": ["id"],
+        "figure": [],
+        "figcaption": [],
+        "blockquote": ["cite"],
+        "code": [],
+        "pre": [],
+        "ul": [], "ol": ["start", "reversed"], "li": ["value"],
+        "time": ["datetime"],
+        "data": ["value"]
+      };
+      
+      tagGrid.innerHTML = filtered.map(([name, category, description, example]) => {
+        const attrs = commonAttrs[name] || [];
+        const attrsHTML = attrs.length > 0 
+          ? `<div class="tag-attrs">${attrs.map(attr => `<span class="attr-pill">${attr}</span>`).join("")}</div>` 
+          : "";
+        return `
+        <article class="tag-card panel">
+          <header>
+            <span class="tag-name">&lt;${name}&gt;</span>
+            <span class="category">${category}</span>
+          </header>
+          <p>${description}</p>
+          ${attrsHTML}
+          <pre><code>${escapeHTML(example)}</code></pre>
+        </article>
+      `}).join("");
+    }
+
+    function renderChips() {
+      const categories = ["Todas", ...Array.from(new Set(tags.map(tag => tag[1]))).sort()];
+      chips.innerHTML = categories.map(category => `
+        <button class="chip ${category === activeCategory ? "active" : ""}" type="button" data-category="${category}">
+          ${category}
+        </button>
+      `).join("");
+    }
+
+    function buildSnippet(name) {
+      if (snippetTemplates[name]) return snippetTemplates[name];
+      if (voidTags.has(name)) return `<${name} __CURSOR__>`;
+      return `<${name}>__CURSOR__</${name}>`;
+    }
+
+    function insertSnippet(name, replaceStart = input.selectionStart, replaceEnd = input.selectionEnd) {
+      const marker = "__CURSOR__";
+      const snippet = buildSnippet(name);
+      const markerIndex = snippet.indexOf(marker);
+      const text = snippet.replace(marker, "");
+      const cursorPosition = replaceStart + (markerIndex >= 0 ? markerIndex : text.length);
+      input.setRangeText(text, replaceStart, replaceEnd, "end");
+      input.focus();
+      input.setSelectionRange(cursorPosition, cursorPosition);
+      hideAutocomplete();
+      updatePreview();
+    }
+
+    function renderSnippetBar() {
+      snippetBar.innerHTML = quickSnippetNames.map(name => `
+        <button class="snippet-btn" type="button" data-snippet="${name}" title="Insertar &lt;${name}&gt;">
+          &lt;${name}&gt;
+        </button>
+      `).join("");
+    }
+
+    function getCurrentTagFragment() {
+      const beforeCursor = input.value.slice(0, input.selectionStart);
+      const match = beforeCursor.match(/<([a-zA-Z][\w-]*)?$/);
+      if (!match) return null;
+      return {
+        query: (match[1] || "").toLowerCase(),
+        start: input.selectionStart - match[0].length,
+        end: input.selectionStart
+      };
+    }
+
+    function getSuggestions(query) {
+      const cleanQuery = query.toLowerCase();
+      return tags
+        .filter(([name, category]) => category !== "Obsoletas" && name.startsWith(cleanQuery))
+        .slice(0, 10);
+    }
+
+    function renderAutocomplete(fragment, forceOpen = false) {
+      const suggestions = getSuggestions(fragment ? fragment.query : "");
+      if (!suggestions.length || (!forceOpen && !fragment)) {
+        hideAutocomplete();
+        return;
+      }
+      currentCompletion = fragment || { query: "", start: input.selectionStart, end: input.selectionStart };
+      activeSuggestionIndex = Math.min(activeSuggestionIndex, suggestions.length - 1);
+      autocompleteBox.innerHTML = suggestions.map(([name, category, description], index) => `
+        <button class="suggestion ${index === activeSuggestionIndex ? "active" : ""}" type="button" role="option" data-tag="${name}" aria-selected="${index === activeSuggestionIndex}">
+          <code>&lt;${name}&gt;</code>
+          <span>${category} - ${description}</span>
+        </button>
+      `).join("");
+      autocompleteBox.classList.add("open");
+    }
+
+    function hideAutocomplete() {
+      autocompleteBox.classList.remove("open");
+      autocompleteBox.innerHTML = "";
+      currentCompletion = null;
+      activeSuggestionIndex = 0;
+    }
+
+    function acceptSuggestion() {
+      const selected = autocompleteBox.querySelector(".suggestion.active");
+      if (!selected || !currentCompletion) return false;
+      insertSnippet(selected.dataset.tag, currentCompletion.start, currentCompletion.end);
+      return true;
+    }
+
+    function drawDOM() {
+      const canvas = document.querySelector("#domCanvas");
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.font = "16px Consolas, monospace";
+      ctx.lineWidth = 2;
+      const nodes = [
+        { label: "html", x: 330, y: 28, color: "#8cc6ff" },
+        { label: "head", x: 170, y: 100, color: "#80e2b6" },
+        { label: "body", x: 490, y: 100, color: "#ff9db8" },
+        { label: "title", x: 80, y: 186, color: "#ffd166" },
+        { label: "meta", x: 250, y: 186, color: "#ffd166" },
+        { label: "main", x: 420, y: 186, color: "#ffd166" },
+        { label: "footer", x: 590, y: 186, color: "#ffd166" }
+      ];
+      const edges = [[0,1],[0,2],[1,3],[1,4],[2,5],[2,6]];
+      ctx.strokeStyle = "rgba(238, 244, 255, .42)";
+      edges.forEach(([a,b]) => {
+        ctx.beginPath();
+        ctx.moveTo(nodes[a].x + 50, nodes[a].y + 28);
+        ctx.lineTo(nodes[b].x + 50, nodes[b].y);
+        ctx.stroke();
+      });
+      nodes.forEach(node => {
+        ctx.fillStyle = "rgba(255,255,255,.08)";
+        ctx.strokeStyle = node.color;
+        ctx.beginPath();
+        ctx.roundRect(node.x, node.y, 100, 44, 8);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = node.color;
+        ctx.fillText(`<${node.label}>`, node.x + 15, node.y + 28);
+      });
+    }
+
+    input.addEventListener("input", () => {
+      updatePreview();
+      const fragment = getCurrentTagFragment();
+      if (fragment) {
+        renderAutocomplete(fragment);
+      } else {
+        hideAutocomplete();
+      }
+    });
+
+    input.addEventListener("keydown", event => {
+      const isAutocompleteOpen = autocompleteBox.classList.contains("open");
+      if (event.ctrlKey && event.code === "Space") {
+        event.preventDefault();
+        renderAutocomplete(null, true);
+        return;
+      }
+      if (isAutocompleteOpen && event.key === "ArrowDown") {
+        event.preventDefault();
+        activeSuggestionIndex += 1;
+        const suggestions = autocompleteBox.querySelectorAll(".suggestion");
+        if (activeSuggestionIndex >= suggestions.length) activeSuggestionIndex = 0;
+        renderAutocomplete(currentCompletion, true);
+        return;
+      }
+      if (isAutocompleteOpen && event.key === "ArrowUp") {
+        event.preventDefault();
+        const suggestions = autocompleteBox.querySelectorAll(".suggestion");
+        activeSuggestionIndex -= 1;
+        if (activeSuggestionIndex < 0) activeSuggestionIndex = suggestions.length - 1;
+        renderAutocomplete(currentCompletion, true);
+        return;
+      }
+      if (isAutocompleteOpen && (event.key === "Enter" || event.key === "Tab")) {
+        event.preventDefault();
+        acceptSuggestion();
+        return;
+      }
+      if (isAutocompleteOpen && event.key === "Escape") {
+        event.preventDefault();
+        hideAutocomplete();
+        return;
+      }
+      if (!isAutocompleteOpen && event.key === "Tab") {
+        event.preventDefault();
+        const start = input.selectionStart;
+        input.setRangeText("  ", start, input.selectionEnd, "end");
+        input.setSelectionRange(start + 2, start + 2);
+        updatePreview();
+      }
+    });
+
+    snippetBar.addEventListener("click", event => {
+      const button = event.target.closest("button[data-snippet]");
+      if (!button) return;
+      insertSnippet(button.dataset.snippet);
+    });
+
+    autocompleteBox.addEventListener("mousedown", event => {
+      event.preventDefault();
+      const button = event.target.closest("button[data-tag]");
+      if (!button || !currentCompletion) return;
+      insertSnippet(button.dataset.tag, currentCompletion.start, currentCompletion.end);
+    });
+
+    search.addEventListener("input", renderTags);
+    chips.addEventListener("click", event => {
+      const button = event.target.closest("button[data-category]");
+      if (!button) return;
+      activeCategory = button.dataset.category;
+      renderChips();
+      renderTags();
+    });
+    document.querySelector("#resetBtn").addEventListener("click", () => {
+      input.value = starterHTML;
+      updatePreview();
+    });
+    document.querySelector("#formatBtn").addEventListener("click", () => {
+      const insertion = "\n<!-- Escribe aqui que quieres recordar de esta parte -->\n";
+      const start = input.selectionStart;
+      input.setRangeText(insertion, start, input.selectionEnd, "end");
+      input.focus();
+      updatePreview();
+    });
+
+    renderSnippetBar();
+    renderChips();
+    renderTags();
+    updatePreview();
+    drawDOM();
+  </script>
+</body>
+</html>
